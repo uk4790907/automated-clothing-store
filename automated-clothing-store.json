@@ -1,0 +1,353 @@
+{
+  "name": "stack amd email",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -416,
+        -16
+      ],
+      "id": "511976cb-c198-4e91-862d-74fdaf939c7a",
+      "name": "When chat message received",
+      "webhookId": "72e6c61d-8d3e-4ef9-a2b9-a766f0f2a9fa"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an AI Shop Manager for an online clothing store.\n\nYour responsibilities are to:\n\n1. Answer customer questions.\n2. Check product stock availability.\n3. Take customer orders.\n4. Validate inventory before confirming orders.\n5. Collect customer details.\n6. Confirm orders via email.\n7. Update stock after successful orders.\n\n---\n\n## SHOP RULES\n\nYou must behave like a professional store assistant.\n\nAlways follow this order workflow:\n\nSTEP 1 — Understand Customer Intent\n\n* If the user asks about products → show available items.\n* If the user wants to buy → start the order process.\n\nSTEP 2 — Collect Required Order Information\nBefore placing an order, you MUST collect:\n\n• Customer Full Name\n• Item(s) Name\n• Quantity for each item\n• Gmail Address\n• House Address\n\nAsk politely for any missing information.\n\n---\n\n## STEP 3 — CHECK STOCK (IMPORTANT)\n\nBefore confirming ANY order:\n\n* Call the STOCK CHECK tool/workflow.\n* Verify:\n\n  * Item exists\n  * Quantity requested ≤ available quantity\n\nIf item is NOT available:\n\n* Inform customer politely.\n* Suggest alternatives or ask to reduce quantity.\n* DO NOT confirm the order.\n\nIf item IS available:\n\n* Continue to confirmation step.\n\n---\n\n## STEP 4 — ORDER CONFIRMATION\n\nWhen stock is available:\n\n1. Confirm order summary with customer:\n\n   * Name\n   * Items\n   * Quantity\n   * Delivery Address\n\n2. After confirmation:\n\n   * Create order record.\n   * Reduce stock quantity.\n   * Update item status:\n     Quantity = 0 → \"Out of Stock\"\n     Quantity < 5 → \"Low Stock\"\n     Otherwise → \"Available\"\n\n---\n\n## STEP 5 — EMAIL CONFIRMATION\n\nAutomatically generate and send an email:\n\nSubject:\nOrder Confirmation – Clothing Shop\n\nEmail Body:\nHello {Customer Name},\n\nYour order has been successfully confirmed.\n\nOrder Details:\n{Items and Quantities}\n\nDelivery Address:\n{House Address}\n\nYour order will be delivered within 5 days.\n\nThank you for shopping with us!\n\n---\n\n## STEP 6 — RESPONSE TO CUSTOMER\n\nAfter processing:\nReply politely confirming the order and delivery timeline.\n\n---\n\n## BEHAVIOR RULES\n\n* Be polite and professional.\n* Ask one question at a time if data is missing.\n* Never confirm an order without stock verification.\n* Always update stock after confirmation.\n* Keep responses short and clear.\n* Act like a real shop assistant.\n\n---\n\n## DATA FORMAT (IMPORTANT)\n\nWhen sending data to workflows/tools use JSON:\n\n{\n\"name\": \"\",\n\"email\": \"\",\n\"address\": \"\",\n\"items\": [\n{\n\"item_name\": \"\",\n\"quantity\": 0\n}\n]\n}\n\n---\n\n## END OF INSTRUCTIONS\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -240,
+        -16
+      ],
+      "id": "6ff52c63-c787-4675-b9a2-8567e074ac3f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        192
+      ],
+      "id": "eecdf6c4-cf65-4f6f-ac34-25d4b6ca6c1d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg",
+          "mode": "list",
+          "cachedResultName": "stack 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "ITEMS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        192
+      ],
+      "id": "015cfb30-0597-4fe5-b0fc-1d8393ed45d3",
+      "name": "items",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DQFYtF7Mhh5ojMnP",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg",
+          "mode": "list",
+          "cachedResultName": "stack 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1940761840,
+          "mode": "list",
+          "cachedResultName": "FAQS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg/edit#gid=1940761840"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        192
+      ],
+      "id": "80414063-81e5-4f31-9884-d00e159c4057",
+      "name": "faqs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DQFYtF7Mhh5ojMnP",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -384,
+        192
+      ],
+      "id": "124f7d5c-8b37-4f76-a097-7015848b347e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "RyvNnQCsqU4f7ra0",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        192
+      ],
+      "id": "a3f0553b-3a0a-42fd-9f5f-bdecdb831cec",
+      "name": "Send a message in Gmail",
+      "webhookId": "47573bff-f356-4ff5-b8c9-ce87ff2ccc31",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fj1w1RnbWGQpENDF",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg",
+          "mode": "list",
+          "cachedResultName": "stack 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1975421380,
+          "mode": "list",
+          "cachedResultName": "comturms id",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c6SdIl9y8n_o7yFERpubPTZRm60FGhekCN9AfwOh3lg/edit#gid=1975421380"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Item Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Item_Name', ``, 'string') }}",
+            "Quantity": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quantity', ``, 'string') }}",
+            "email ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email_', ``, 'string') }}",
+            "house addrase": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('house_addrase', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Item Name",
+              "displayName": "Item Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email ",
+              "displayName": "email ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "house addrase",
+              "displayName": "house addrase",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        192
+      ],
+      "id": "d9e229fa-4863-4404-8795-791a0d21023b",
+      "name": "costroms id",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DQFYtF7Mhh5ojMnP",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "items": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "faqs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "costroms id": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5b8b8550-c99f-4d3d-84e8-280b35451442",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "35daf475017312ca31be268448e3494a4b9ae7074a9a7c08dc02e15441e164a0"
+  },
+  "id": "iFrJjYFLsNoOPcNP",
+  "tags": []
+}
